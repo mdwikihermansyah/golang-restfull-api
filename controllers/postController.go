@@ -10,7 +10,6 @@ import (
 )
 
 // type validation post input
-// type validation post input
 type ValidatePostInput struct {
 	Title   string `json:"title" binding:"required"`
 	Content string `json:"content" binding:"required"`
@@ -77,6 +76,7 @@ func StorePost(c *gin.Context) {
 	})
 }
 
+// get post by id
 func FindPostById(c *gin.Context) {
 	var post models.Post
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&post).Error; err != nil {
@@ -91,14 +91,15 @@ func FindPostById(c *gin.Context) {
 	})
 }
 
+// update post
 func UpdatePost(c *gin.Context) {
 	var post models.Post
-
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&post).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
 
+	//validate input
 	var input ValidatePostInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		var ve validator.ValidationErrors
@@ -122,9 +123,9 @@ func UpdatePost(c *gin.Context) {
 	})
 }
 
+// delete post
 func DeletePost(c *gin.Context) {
 	var post models.Post
-
 	if err := models.DB.Where("id = ?", c.Param("id")).First(&post).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
